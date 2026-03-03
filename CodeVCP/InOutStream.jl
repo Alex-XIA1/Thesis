@@ -29,13 +29,6 @@ function Read_DIMACS_Instance(filename)
             # separation of the elements with space separator
             x = split(line, " ")
 
-            """All lines containing the letter c at start gives a description of the graph
-            so we can skip them
-            """
-            if (x[1] == "c")
-                continue
-            end
-
             """fetch the number of vertexes and edges and initialize 
             the simple graph (no multiple edge and self loops). the line containing p as first letter
             """
@@ -43,7 +36,7 @@ function Read_DIMACS_Instance(filename)
                 nbvert = parse(Int, x[3])
                 g = SimpleGraph(nbvert)
             # for the rest of the file we have all edges (letter e)
-            else 
+            elseif (x[1] == "e")
             # fetch the vertexes and add the edge to the graph
                 v1 = parse(Int,x[2])
                 v2 = parse(Int,x[3])
@@ -75,10 +68,9 @@ function Read_DIMACS_Instance_Using_AdjMatrix(filename)
             # separation of the elements with space separator
             x = split(line, " ")
 
-            """All lines containing the letter c at start gives a description of the graph
-            so we can skip them
+            """We skip until we find p
             """
-            if (x[1] == "c")
+            if (length(x) == 0 || x[1] != "p")
                 continue
             end
 
@@ -133,9 +125,10 @@ end
 # color the edges of a cograph depending on the solution taken 
 function colorEdgesofCograph(solution, cograph, outFilename)
     _, xvec, edgeVarMap = solution
-    # base coloration
+    # base coloration, everything is white with no transparency
     edgeColoration = fill(RGBA(1,1,1,1), ne(cograph))
-    styles = fill(1.0, ne(cograph))
+    # everything is at max width, since there is no way to make dashed lines.
+    edgeWidth = fill(1.0, ne(cograph))
 
     for e in edges(cograph)
         # we take the edges
@@ -148,14 +141,14 @@ function colorEdgesofCograph(solution, cograph, outFilename)
         # if value = 0
         elseif (xvec[indMap] <= eps)
             edgeColoration[indMap] = RGBA(0, 0, 1, 0.3)
+        # else the values are decimal
         else
-            edgeColoration[indMap] = colorant"red"
-            styles[indMap] = 0.01
+            edgeColoration[indMap] = colorant"blue"
+            edgeWidth[indMap] = 0.1
         end
-        println(styles)
     end
 
-    draw(PNG(outFilename, 16cm, 16cm), gplot(cograph, edgestrokec = edgeColoration, edgelinewidth = styles, layout=spectral_layout))
+    draw(PNG(outFilename, 16cm, 16cm), gplot(cograph, edgestrokec = edgeColoration, edgelinewidth = edgeWidth, layout=spectral_layout))
 end
 
 # Some test functions that will probably be removed later
