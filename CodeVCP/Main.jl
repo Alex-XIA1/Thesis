@@ -5,9 +5,8 @@ include("Algorithms.jl")
 
 #filename = "./Instances/DIMACS/0005_test.dim"
 #filename = "./Instances/DIMACS/0011_myciel3.dim"
-#filename = "./Instances/DIMACS/0030_1-FullIns_3.dim"
-#dimacsGraph = Read_DIMACS_Instance(filename)
-dimacsGraph = complete_graph(10)
+filename = "./Instances/DIMACS/0030_1-FullIns_3.dim"
+dimacsGraph = Read_DIMACS_Instance(filename)
 codimacsGraph = complement(dimacsGraph)
 
 dsatur_coloration = DSatur(dimacsGraph)

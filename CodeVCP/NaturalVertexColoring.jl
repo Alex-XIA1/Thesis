@@ -12,7 +12,7 @@ Takes a graph made from Graphs.jl in entry give a coloring according to the natu
 """
 function NaturalColoringMILP(graph, maxColors)
 
-    # we are taking nbVertex = nbColors, TODO use Dsatur to get a better value for K
+    # we are taking nbVertex = nbColors
     nbVertex = nv(graph)
     nbColors = maxColors
     # create an lp model with Cplex

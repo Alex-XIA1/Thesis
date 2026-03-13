@@ -15,38 +15,6 @@ struct solution
     edgeToVarMap # mapping from edges to var (for easier access to needed edge), it has a mapping, (vertex1, vertex2) : index in sol
 end
 
-"""
-Function that enumerates all triangles (K3) of a graph
-and adds them twice in order (u,v,w) and (u,w,v) with u being a smaller index graph
-in the paper it represents the T set
-"""
-function enumerate_Triangles(graph)
-
-    T = Tuple{Int, Int, Int}[]
-
-    for i in vertices(graph)
-        for j in neighbors(graph, i)
-            # we check if v is smaller than u since we want an ordering for adding the triangles
-            if (i < j)
-                # we use the common neighbors of u and v to enumerates triangles
-                for k in common_neighbors(graph, i, j)
-                    # if i < j and i < k then i < min(j,k), faster to check this way.
-                    if (i < k)
-                        # (i,k,j) will be added when we reach k = j in the loop
-                        push!(T, (i,j,k))
-                    end
-                end
-            end
-        end
-    end
-
-    if (size(T) == 0)
-        println("Empty set T, either the graph has no K3 or there is an issue with it")
-    end
-
-    return T
-end
-
 
 """
 Function that makes both T and PI sets of the Palubeckis formulation from a given graph
