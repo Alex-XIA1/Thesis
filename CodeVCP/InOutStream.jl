@@ -1,6 +1,5 @@
 import Cairo
 import Fontconfig
-using Plots
 using Graphs
 using Random
 using GraphPlot
@@ -10,8 +9,8 @@ using Colors
 Random.seed!(42)
 
 struct Graphdata
-	nb_sommets    # size of instance (points)
-    nb_aretes    # number of edges
+	#nb_sommets    # size of instance (points)
+    #nb_aretes    # number of edges
 	G            # Graph (SimpleGraph())
 end
 
