@@ -70,7 +70,38 @@ function solution_to_polyhedron(solution)
 end
 
 function getHrep(solution)
+    println("getting hrep")
     pol = solution_to_polyhedron(solution)
     return hrep(pol)
 end
 
+"""
+Function to turn a hrep into a written form
+"""
+function showInequalities(hspace, mapVar_to_edge)
+    for h in Polyhedra.halfspaces(hspace)
+        acoefs = h.a
+        beta = h.β
+        ineqString = String[]
+        for (i,coef) in enumerate(acoefs)
+            if coef != 0
+                push!(ineqString, string(coef, "x", mapVar_to_edge[i]))
+            end
+        end
+        ineqString = join(ineqString, " + ") * " <= " * string(beta)
+        println("inequality : ",ineqString)
+    end
+
+    for h in Polyhedra.hyperplanes(hspace)
+        acoefs = h.a
+        beta = h.β
+        ineqString = String[]
+        for (i,coef) in enumerate(acoefs)
+            if coef != 0
+                push!(ineqString, string(coef, " x", mapVar_to_edge[i]))
+            end
+        end
+        ineqString = join(ineqString, " + ") * " = " * string(beta)
+        println("equality : ",ineqString)
+    end
+end

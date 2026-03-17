@@ -100,6 +100,41 @@ function Read_DIMACS_Instance_Using_AdjMatrix(filename)
 
 end
 
+"""
+Write the hrep into a file
+"""
+function writeHrep(graphName::String, hspace, mapVar_to_edge)
+    filename = graphName*".txt"
+    open(filename, "w") do io
+        println(io, "Graph is ",graphName)
+        for h in Polyhedra.halfspaces(hspace)
+            acoefs = h.a
+            beta = h.β
+            ineqString = String[]
+            for (i,coef) in enumerate(acoefs)
+                if coef != 0
+                    push!(ineqString, string(coef, "x", mapVar_to_edge[i]))
+                end
+            end
+            ineqString = join(ineqString, " + ") * " <= " * string(beta)
+            println(io, "inequality : ",ineqString)
+        end
+
+        for h in Polyhedra.hyperplanes(hspace)
+            acoefs = h.a
+            beta = h.β
+            ineqString = String[]
+            for (i,coef) in enumerate(acoefs)
+                if coef != 0
+                    push!(ineqString, string(coef, " x", mapVar_to_edge[i]))
+                end
+            end
+            ineqString = join(ineqString, " + ") * " = " * string(beta)
+            println(io, "equality : ",ineqString)
+        end
+    end
+end
+
 
 function saveGraph(graph, outFilename)
     coloration = fill(RGBA(1,1,1,1), nv(graph))
