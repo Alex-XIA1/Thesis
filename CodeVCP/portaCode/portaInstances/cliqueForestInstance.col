@@ -1,0 +1,13 @@
+c FILE: cliqueForestInstance.col
+
+c DESCRIPTION: graph example from clique connecting forest paper of Denis Cornaz
+
+p edge 6 8
+e 1 2
+e 1 3
+e 2 3
+e 2 4
+e 3 5
+e 4 5
+e 4 6
+e 5 6

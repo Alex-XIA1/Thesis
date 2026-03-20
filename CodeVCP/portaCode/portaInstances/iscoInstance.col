@@ -1,0 +1,16 @@
+c FILE: iscoInstance.col
+
+c DESCRIPTION: graph example in iscoSlides
+
+p edge 7 11
+e 1 2
+e 1 6
+e 1 7
+e 2 3
+e 2 4
+e 3 5
+e 3 6
+e 3 7
+e 4 5
+e 4 6
+e 5 7

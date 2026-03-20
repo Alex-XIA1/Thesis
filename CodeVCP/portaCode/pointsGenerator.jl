@@ -53,17 +53,17 @@ function enumExPoints(cograph::SimpleGraph, diCograph::SimpleDiGraph)
     for U in allU
         # get the edgeset of U
         edgeSetU = U[2]
+        println("U is ",U)
         # enum should have removed all edgeset of size 0 so no need to check
         @constraint(lpModel, sum(x[edge_to_var[e]] for e in edgeSetU) <= length(U[1]) - 2)
     end
+    println(lpModel)
 
     # set the solver for enumeration
     gurobi_allowEnum(lpModel)
     pool_size = (nv(cograph) + nEdges)*10
     gurobi_setEnum(lpModel, pool_size)
-
-    println(lpModel)
-
+    
     println("Début d'énumération des points")
 	optimize!(lpModel)
    	println("Fin d'énumération des points")

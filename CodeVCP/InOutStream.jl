@@ -137,12 +137,11 @@ end
 
 
 function saveGraph(graph, outFilename)
-    coloration = fill(RGBA(1,1,1,1), nv(graph))
-    for i in 1:nv(graph)
-        coloration[i] = RGBA(0.0,0.8,0.8,0.1)
-    end
+    coloration = fill(RGBA(1,0,0,1), nv(graph))
+    nodelabel = [i for i in 1:nv(graph)]
+    println(nodelabel)
     println(coloration)
-    draw(PNG(outFilename, 16cm, 16cm), gplot(graph, nodefillc = coloration, layout=spectral_layout))
+    draw(PNG(outFilename, 16cm, 16cm), gplot(graph, nodelabel = nodelabel, nodefillc = coloration, layout=spring_layout))
 end
 
 function colorGraph(stablesSets, graph, outFilename)
