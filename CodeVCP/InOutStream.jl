@@ -111,12 +111,17 @@ function writeHrep(graphName::String, hspace, mapVar_to_edge)
             acoefs = h.a
             beta = h.β
             ineqString = String[]
+
             for (i,coef) in enumerate(acoefs)
                 if coef != 0
-                    push!(ineqString, string(coef, "x", mapVar_to_edge[i]))
+                    tmp = mapVar_to_edge[i]
+                    varString = "_"*string(tmp[1])*"_"*string(tmp[2])
+                    push!(ineqString, string(coef, "x", varString))
                 end
             end
+
             ineqString = join(ineqString, " + ") * " <= " * string(beta)
+            
             println(io, "inequality : ",ineqString)
         end
 
@@ -130,6 +135,63 @@ function writeHrep(graphName::String, hspace, mapVar_to_edge)
                 end
             end
             ineqString = join(ineqString, " + ") * " = " * string(beta)
+            println(io, "equality : ",ineqString)
+        end
+    end
+end
+
+"""
+Write the hrep into a file with sorted inequalities
+"""
+function writeHrepSorted(graphName::String, hspace, mapVar_to_edge)
+    filename = graphName*".txt"
+    open(filename, "w") do io
+        println(io, "Graph is ",graphName)
+        halfspaces = collect(Polyhedra.halfspaces(hspace))
+        vecs = [vcat(hs.a, hs.β) for hs in halfspaces]
+        sorted_vecs = sort(vecs, by = v -> count(>(0), v[1:end-1]))
+
+        for h in sorted_vecs
+            supOrlow = nothing
+            if (sum(h[1:end-1]) < 0)
+                supOrlow = " >= "
+                h[1:end-1] = -h[1:end-1]
+            else
+                supOrlow = " <= "
+            end
+            ineqString = String[]
+
+            for (i,coef) in enumerate(h[1:end-1])
+                if coef != 0
+                    tmp = mapVar_to_edge[i]
+                    varString = "_"*string(tmp[1])*"_"*string(tmp[2])
+                    push!(ineqString, string(coef, "x", varString))
+                end
+            end
+
+            ineqString = join(ineqString, " + ") * supOrlow * string(h[end])
+            
+            println(io, "inequality : ",ineqString)
+        end
+
+
+        halfspaces = collect(Polyhedra.hyperplanes(hspace))
+        vecs = [vcat(hs.a, hs.β) for hs in halfspaces]
+        sorted_vecs = sort(vecs, by = v -> count(>(0), v[1:end-1]))
+
+        for h in sorted_vecs
+            ineqString = String[]
+
+            for (i,coef) in enumerate(h[1:end-1])
+                if coef != 0
+                    tmp = mapVar_to_edge[i]
+                    varString = "_"*string(tmp[1])*"_"*string(tmp[2])
+                    push!(ineqString, string(coef, "x", varString))
+                end
+            end
+
+            ineqString = join(ineqString, " + ") * "=" * string(h[end])
+            
             println(io, "equality : ",ineqString)
         end
     end
@@ -182,21 +244,4 @@ function colorEdgesofCograph(solution, cograph, outFilename)
     end
 
     draw(PNG(outFilename, 16cm, 16cm), gplot(cograph, edgestrokec = edgeColoration, edgelinewidth = edgeWidth, layout=spectral_layout))
-end
-
-# Some test functions that will probably be removed later
-function showStable(stableSet, graph, outFilename)
-    coloration = fill(colorant"white", nv(graph))
-    for v in stableSet
-        coloration[v] = RGBA(0.0,0.8,0.8,2)
-    end
-    draw(PNG(outFilename, 16cm, 16cm), gplot(graph, nodefillc = coloration, layout=spectral_layout))
-end
-
-function colorEdges(graph, outFilename)
-    coloration = fill("white", ne(graph))
-    for i in 1:ne(graph)
-        coloration[i] = "red"
-    end
-    draw(PNG(outFilename, 16cm, 16cm), gplot(graph, edgestrokec = coloration, layout=spectral_layout))
 end
